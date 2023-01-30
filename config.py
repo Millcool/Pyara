@@ -76,7 +76,7 @@ class CFG:
     device        = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     test_path     = " " if Kaggle else "E:/Audio/ASV/clips/"
     save_path     = '../working/result/' if Kaggle else "./result/"
-    train_path    = "data/"
+    train_path    =  "/app/data/"#"C:/Users/79671/Desktop/ML/Datasets/Audio/ASVspoof2021/clips/"
     csv_path      = 'equal_dataset'
     best_model_w  = '../input/russian-railways-2/best_epoch_ofu-efficientnet-b4_v2.bin' if Kaggle else f'./best_epoch_ofu-{backbone}_v2.bin'
 
