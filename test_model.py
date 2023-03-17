@@ -1,8 +1,7 @@
 from config import *
-from metrics import AverageMeter
+from metrics import *
 
 def test_model(test_loader, model):
-    test_loss_meter = AverageMeter()
     test_accuracy_meter = AverageMeter()
     test_f1_meter = AverageMeter()
     test_EER_meter = AverageMeter()
@@ -31,31 +30,32 @@ def test_model(test_loader, model):
 
         matches = (output.argmax(dim=-1) == label).float().mean()
         f1 = f1_score(output.argmax(dim=-1).cpu(), label.cpu(), average='weighted')
-        eer = compute_eer(labels, out)
         # print(f'Test:{matches.item()}')
 
-        test_loss_meter.update(loss.item(), len(batch[0]))
+
         test_accuracy_meter.update(matches.item(), len(batch[0]))
         # test_EER_meter.update(eer[0],              len(batch[0]))
         test_f1_meter.update(f1, len(batch[0]))
-
         matrix = confusion_matrix(labels, out, labels=[0, 1])
         all_matrix += matrix
         # print(f'F1 :{f1} , EER: {eer}')
         # print(f'Confusion Matrix of all:{all_matrix}')\
 
     mDCF = minDCF(all_matrix)
-    validation_MinDCF_meter.update(mDCF)
 
     print(f'Confusion Matrix of all:{all_matrix}')
     print(f'minDCF : {mDCF}% ')
-    plt.title('ROC CURVE WITH EER')
     fpr, tpr, _ = metrics.roc_curve(full_labels, full_vec)
     EER = brentq(lambda x: 1. - x - interp1d(fpr, tpr)(x), 0., 1.) * 100
     print(f'EER : {EER}%')
 
-    auc = metrics.roc_auc_score(full_labels, full_vec)
-
+    test_auc = metrics.roc_auc_score(full_labels, full_vec)
+    wandb.log({
+               "Test Accuracy": test_accuracy_meter.avg,
+               "Test F1 score": test_f1_meter.avg,
+               "Test EER": EER,
+               "Test min-tDCF": mDCF,
+                "Test_AUC" : test_auc})
     # display.clear_output()
     print(f'Confusion Matrix of all:{all_matrix}')
     print(f'Accuracy on Test Dataset:{test_accuracy_meter.avg} !')

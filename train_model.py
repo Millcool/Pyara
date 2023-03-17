@@ -116,8 +116,8 @@ def train_model(model, optimizer, train_loader, valid_loader, criterion, directo
                    "Valid Accuracy": validation_accuracy_meter.avg,
                    "Validation F1 score": validation_f1_meter.avg,
                    "Validation EER": EER,
-                   "Valiation mDCF": validation_MinDCF_meter.avg,
-                   "EER": EER})
+                   "Valiation min-tDCF": validation_MinDCF_meter.avg,
+                   "Validation_AUC": auc})
     ################### Save Last Epoch ##########################################
     best_model_wts = copy.deepcopy(model.state_dict())
     PATH = f"./{directory}/Last_epoch.bin"

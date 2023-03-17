@@ -24,28 +24,27 @@ optimizer = torch.optim.Adam(model.parameters(), lr=CFG.lr)
 criterion = nn.CrossEntropyLoss()
 
 try:
-    if CFG.Kaggle:
-        os.mkdir('../working/result')
-        print('KAGGLE DIR CREATED')
-    else:
-        #shutil.rmtree('./result')
-        local_time = time.ctime().replace(' ', '_').replace(':', '.')
-        directory = f'results/result'
-        os.mkdir(directory)
-        print('PC DIR CREATED')
+    #shutil.rmtree('./result')
+    #local_time = time.ctime().replace(' ', '_').replace(':', '.')
+    directory = f'results/result'
+    os.mkdir(directory)
+    print('PC DIR CREATED')
 except Exception:
     print("DIR NOT CREATED")
     pass
 
 run = wandb_init()
 
+time.sleep(120)
+time.sleep(30)
+for i in range(1000):
+    time.sleep(0.1)
+    print("Hi",i)
+time.speep(20)
 
 train_model(model,optimizer,train_loader,valid_loader, criterion, directory)
 
 
-
-run.finish()
-
-
 test_model(test_loader, model)
 
+run.finish()

@@ -12,7 +12,7 @@ def wandb_login():
 
 
 def wandb_init():
-    run = wandb.init(project = 'Docker',
+    run = wandb.init(project = CFG.wandb_project_name,
                      anonymous = None,
                      name = f"{CFG.model_name}, Epochs: {CFG.epochs}, Samples: {CFG.num_item_all}"
                      )
