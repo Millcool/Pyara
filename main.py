@@ -1,12 +1,8 @@
-from config import *
-from test_model import *
-from train_model import *
-from transforms import *
-from Wandb_functions import *
-from metrics import *
-from dataset import *
+from Model.test_model import test_model
+from Model.train_model import *
+from Wandb.Wandb_functions import *
 from dataloader import *
-from model import *
+from Model.model import *
 
 
 wandb_login()

@@ -1,4 +1,10 @@
-from config import *
+import os
+
+import torch
+import torchaudio
+from torch.utils.data import Dataset
+
+from config import CFG
 
 
 class UrbanSoundDataset(Dataset):
@@ -9,7 +15,7 @@ class UrbanSoundDataset(Dataset):
                  transformation,
                  target_sample_rate,
                  num_samples,
-                lable = False):
+                 lable=False):
         self.annotations = annotations_file
         self.audio_dir = audio_dir
         self.transformation = transformation
@@ -21,20 +27,20 @@ class UrbanSoundDataset(Dataset):
         return len(self.audio_dir)
 
     def __getitem__(self, index):
-        #print(index)
+        # print(index)
         audio_sample_path = self._get_audio_sample_path(index)
         signal, sr = torchaudio.load(audio_sample_path)
         signal = self.transformation(signal)
-        #signal = self._resample_if_necessary(signal, sr)
+        # signal = self._resample_if_necessary(signal, sr)
         signal = self._cut_if_necessary(signal)
         signal = self._right_pad_if_necessary(signal)
-        #signal = signal.repeat(3, 1, 1)
-        #signal = torch.squeeze(signal)
-        #signal = self.transformation(signal)
-        if self.lable == True: # WHEN WE TRAIN
+        # signal = signal.repeat(3, 1, 1)
+        # signal = torch.squeeze(signal)
+        # signal = self.transformation(signal)
+        if self.lable == True:  # WHEN WE TRAIN
             label = self._get_audio_sample_label(index)
             return signal, label
-        else: # WHEN WE PREDICT
+        else:  # WHEN WE PREDICT
             return signal, torch.randint(0, 1, (1,))
 
     def _cut_if_necessary(self, signal):
@@ -64,19 +70,18 @@ class UrbanSoundDataset(Dataset):
     def _get_audio_sample_path(self, index):
         path = self.audio_dir[index]
         if self.lable == True:
-            path = os.path.join(CFG.train_path,path)
+            path = os.path.join(CFG.train_path, path)
         else:
-            path = os.path.join(CFG.test_path,path)
+            path = os.path.join(CFG.test_path, path)
         path = path + '.flac'
         return path
 
     def _get_audio_sample_label(self, index):
         path = self.audio_dir[index]
-        #print(path)
+        # print(path)
         df = self.annotations
         df = df.loc[lambda df: df['path'] == path]
-        #print(df.head())
+        # print(df.head())
         num = list(df['fake'])
-        #print(num)
+        # print(num)
         return torch.Tensor(num)
-

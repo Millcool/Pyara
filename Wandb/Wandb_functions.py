@@ -19,7 +19,7 @@ def wandb_init():
 
     wandb.config.epochs = CFG.epochs
     wandb.config.train_batch_size = CFG.train_bs
-    wandb.config.valid_batch_sizw = CFG.valid_bs
+    wandb.config.valid_batch_size = CFG.valid_bs
     wandb.config.samples = CFG.num_item_all
     wandb.config.Debug = CFG.DEBUG
     wandb.config.sr = CFG.SAMPLE_RATE

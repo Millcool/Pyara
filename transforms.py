@@ -1,4 +1,10 @@
-from config import *
+"""
+Module of transformations for audio signal
+"""
+import torchaudio
+import torch
+from config import CFG
+
 
 mel_spectrogram = torchaudio.transforms.MelSpectrogram(
     sample_rate=CFG.SAMPLE_RATE,
