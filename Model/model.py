@@ -1,4 +1,8 @@
-from config import *
+"""
+Module for where models described
+"""
+from torch import nn
+from config import CFG
 
 
 class ResNetBlock(nn.Module):
@@ -82,6 +86,7 @@ class MFCCModel(nn.Module):
         out = self.logsoftmax(out)
         return out
 
+
 class LSTM(nn.Module):
 
     # define all the layers used in model
@@ -98,7 +103,7 @@ class LSTM(nn.Module):
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.5)
         self.clf = nn.Linear(hidden_size, 2)
-        self._fc = torch.nn.Sequential(
+        self._fc = nn.Sequential(
             nn.Linear(in_features=128, out_features=64, bias=True),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5, inplace=False),
@@ -137,6 +142,3 @@ class LSTM(nn.Module):
 #         out, _ = self.lstm(x, (h0, c0))
 #         out = self.fc(out[:, -1, :])
 #         return out
-
-
-

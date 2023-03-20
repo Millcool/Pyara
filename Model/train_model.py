@@ -1,5 +1,15 @@
-from config import *
-from metrics import *
+from collections import defaultdict
+import torch
+import tqdm
+import wandb
+from matplotlib import pyplot as plt
+from sklearn.metrics import f1_score, confusion_matrix, roc_auc_score, roc_curve
+from scipy.optimize import brentq
+from scipy.interpolate import interp1d
+from torch.distributed.pipeline.sync import copy
+
+from config import CFG
+from metrics import compute_eer, AverageMeter, min_tDCF
 
 
 def train_model(model, optimizer, train_loader, valid_loader, criterion, directory):
@@ -94,17 +104,17 @@ def train_model(model, optimizer, train_loader, valid_loader, criterion, directo
         ###############################################################################################################################
 
         # display.clear_output()
-        mDCF = minDCF(all_matrix)
+        mDCF = min_tDCF(all_matrix)
         validation_MinDCF_meter.update(mDCF)
 
         print(f'Confusion Matrix of all:{all_matrix}')
         print(f'minDCF : {mDCF}% ')
         plt.title('ROC CURVE WITH EER')
-        fpr, tpr, _ = metrics.roc_curve(full_labels, full_vec)
+        fpr, tpr, _ = roc_curve(full_labels, full_vec)
         EER = brentq(lambda x: 1. - x - interp1d(fpr, tpr)(x), 0., 1.) * 100
         print(f'EER : {EER}%')
 
-        auc = metrics.roc_auc_score(full_labels, full_vec)
+        auc = roc_auc_score(full_labels, full_vec)
 
         storage['validation_loss'].append(validation_loss_meter.avg)
         storage['validation_accuracy'].append(validation_accuracy_meter.avg)

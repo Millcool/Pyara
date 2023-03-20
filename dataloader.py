@@ -1,3 +1,6 @@
+"""
+Dataloader module for loaders prepare
+"""
 import random
 
 import pandas as pd

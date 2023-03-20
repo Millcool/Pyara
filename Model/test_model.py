@@ -1,5 +1,10 @@
-from config import *
-from metrics import *
+"""
+Model where described the process of model test
+"""
+import tqdm
+import torch
+from config import CFG
+from metrics import compute_eer, AverageMeter, min_tDCF
 
 def test_model(test_loader, model):
     test_accuracy_meter = AverageMeter()
@@ -41,7 +46,7 @@ def test_model(test_loader, model):
         # print(f'F1 :{f1} , EER: {eer}')
         # print(f'Confusion Matrix of all:{all_matrix}')\
 
-    mDCF = minDCF(all_matrix)
+    mDCF = min_tDCF(all_matrix)
 
     print(f'Confusion Matrix of all:{all_matrix}')
     print(f'minDCF : {mDCF}% ')
