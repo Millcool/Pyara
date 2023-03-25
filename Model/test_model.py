@@ -1,10 +1,12 @@
 """
 Model where described the process of model test
 """
-import tqdm
 import torch
+import tqdm
+
 from config import CFG
-from metrics import compute_eer, AverageMeter, min_tDCF
+from metrics import AverageMeter, min_tDCF
+
 
 def test_model(test_loader, model):
     test_accuracy_meter = AverageMeter()

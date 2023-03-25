@@ -2,6 +2,7 @@
 Module for where models described
 """
 from torch import nn
+
 from config import CFG
 
 
@@ -142,3 +143,7 @@ class LSTM(nn.Module):
 #         out, _ = self.lstm(x, (h0, c0))
 #         out = self.fc(out[:, -1, :])
 #         return out
+
+
+
+

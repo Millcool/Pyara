@@ -26,6 +26,7 @@ class AverageMeter(object):
 
 
 def compute_det_curve(target_scores, nontarget_scores):
+    """Compute det_curve"""
     n_scores = target_scores.size + nontarget_scores.size  # sum of sizes
     all_scores = np.concatenate((target_scores, nontarget_scores))  # vector of scores
     labels = np.concatenate((np.ones(target_scores.size), np.zeros(nontarget_scores.size)))  # vextor of labels

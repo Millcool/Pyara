@@ -1,39 +1,5 @@
-"""
-Module with Config and imports
-"""
-# Main imports
-import glob
-import sys
-import warnings
-import os
-import time
-import random
-from collections import defaultdict
-
-# DS library imports
-
-from scipy import stats
-import numpy as np
-import pandas as pd
 import torch
-import torch.nn.functional as F
 from torch import nn
-from torch.utils.data import DataLoader, Dataset, Subset
-import torchaudio
-from tqdm.auto import tqdm
-import copy
-import shutil
-
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score, confusion_matrix
-from scipy.optimize import brentq
-from scipy.interpolate import interp1d
-# Import visualizations
-import matplotlib.pyplot as plt
-from IPython import display
-import wandb
-
-warnings.filterwarnings("ignore")
 
 
 class CFG:
@@ -47,6 +13,7 @@ class CFG:
     seed = 101
     model_name = 'LSTM'
     archive_name = 'Audio'
+    width = 300
     train_bs = 128
     valid_bs = 128
     mels = 80
@@ -77,3 +44,6 @@ class CFG:
     best_model_w = f''
     wandb_project_name = "Docker"
     wandb_run_name = f"{model_name}, Epochs: {epochs}, Samples: {num_item_all},BS: {train_bs}, MY_PC"
+
+
+#%%

@@ -1,4 +1,4 @@
-import time
+import os
 
 import pandas as pd
 import torch
@@ -11,6 +11,7 @@ from Wandb.Wandb_functions import wandb_init, wandb_login
 from config import CFG
 from dataloader import prepare_loaders
 
+#%%
 wandb_login()
 
 data = pd.read_csv(CFG.csv_path, sep = '\t' ) #pd.read_csv(CFG.csv_path, sep = '\\t', header=None)
@@ -37,12 +38,8 @@ except Exception:
 
 run = wandb_init()
 
-time.sleep(120)
-time.sleep(30)
-for i in range(1000):
-    time.sleep(0.1)
-    print("Hi",i)
-time.speep(20)
+
+
 
 train_model(model,optimizer,train_loader,valid_loader, criterion, directory)
 
@@ -50,3 +47,7 @@ train_model(model,optimizer,train_loader,valid_loader, criterion, directory)
 test_model(test_loader, model)
 
 run.finish()
+
+#%%
+
+#%%

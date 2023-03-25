@@ -1,15 +1,16 @@
 from collections import defaultdict
+
 import torch
 import tqdm
 import wandb
 from matplotlib import pyplot as plt
-from sklearn.metrics import f1_score, confusion_matrix, roc_auc_score, roc_curve
-from scipy.optimize import brentq
 from scipy.interpolate import interp1d
+from scipy.optimize import brentq
+from sklearn.metrics import confusion_matrix, f1_score, roc_auc_score, roc_curve
 from torch.distributed.pipeline.sync import copy
 
 from config import CFG
-from metrics import compute_eer, AverageMeter, min_tDCF
+from metrics import AverageMeter, min_tDCF
 
 
 def train_model(model, optimizer, train_loader, valid_loader, criterion, directory):
