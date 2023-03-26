@@ -98,7 +98,7 @@ class LSTM(nn.Module):
 
         self.lstm = nn.LSTM(input_size=input_dim,
                             hidden_size=hidden_size,
-                            num_layers=10,
+                            num_layers=3,
                             batch_first=True,
                             bidirectional=False)
         self.relu = nn.ReLU()

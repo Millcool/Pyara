@@ -1,14 +1,22 @@
 """
 Model where described the process of model test
 """
+
 import torch
-import tqdm
+import wandb
+from scipy.interpolate import interp1d
+from scipy.optimize import brentq
+from sklearn import metrics
+from sklearn.metrics import confusion_matrix, f1_score
+from tqdm.auto import tqdm
 
 from config import CFG
 from metrics import AverageMeter, min_tDCF
 
 
 def test_model(test_loader, model):
+    print(f'WE ARE TESTING OUT MODEL !')
+    print()
     test_accuracy_meter = AverageMeter()
     test_f1_meter = AverageMeter()
     test_EER_meter = AverageMeter()
@@ -39,7 +47,6 @@ def test_model(test_loader, model):
         f1 = f1_score(output.argmax(dim=-1).cpu(), label.cpu(), average='weighted')
         # print(f'Test:{matches.item()}')
 
-
         test_accuracy_meter.update(matches.item(), len(batch[0]))
         # test_EER_meter.update(eer[0],              len(batch[0]))
         test_f1_meter.update(f1, len(batch[0]))
@@ -58,11 +65,11 @@ def test_model(test_loader, model):
 
     test_auc = metrics.roc_auc_score(full_labels, full_vec)
     wandb.log({
-               "Test Accuracy": test_accuracy_meter.avg,
-               "Test F1 score": test_f1_meter.avg,
-               "Test EER": EER,
-               "Test min-tDCF": mDCF,
-                "Test_AUC" : test_auc})
+        "Test Accuracy": test_accuracy_meter.avg,
+        "Test F1 score": test_f1_meter.avg,
+        "Test EER": EER,
+        "Test min-tDCF": mDCF,
+        "Test_AUC": test_auc})
     # display.clear_output()
     print(f'Confusion Matrix of all:{all_matrix}')
     print(f'Accuracy on Test Dataset:{test_accuracy_meter.avg} !')

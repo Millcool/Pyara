@@ -1,13 +1,13 @@
 from collections import defaultdict
 
 import torch
-import tqdm
+from tqdm.auto import tqdm
 import wandb
 from matplotlib import pyplot as plt
 from scipy.interpolate import interp1d
 from scipy.optimize import brentq
 from sklearn.metrics import confusion_matrix, f1_score, roc_auc_score, roc_curve
-from torch.distributed.pipeline.sync import copy
+import copy
 
 from config import CFG
 from metrics import AverageMeter, min_tDCF

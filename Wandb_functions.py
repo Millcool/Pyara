@@ -1,7 +1,7 @@
-from Wandb_token import *
+from Wandb_token import WANDB_TOKEN
 
-from config import *
-
+from config import CFG
+import wandb
 
 def wandb_login():
     try:
