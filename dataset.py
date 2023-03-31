@@ -3,7 +3,7 @@ import os
 import torch
 import torchaudio
 from torch.utils.data import Dataset
-
+from torch import distributions
 from config import CFG
 
 
@@ -12,12 +12,16 @@ class UrbanSoundDataset(Dataset):
     def __init__(self,
                  annotations_file,
                  audio_dir,
+                 audio_augmentations,
+                 mel_augmentations,
                  transformation,
                  target_sample_rate,
                  num_samples,
                  lable=False):
         self.annotations = annotations_file
         self.audio_dir = audio_dir
+        self.audio_augmentation = audio_augmentations
+        self.mel_augmentations = mel_augmentations
         self.transformation = transformation
         self.target_sample_rate = target_sample_rate
         self.num_samples = num_samples
@@ -30,14 +34,16 @@ class UrbanSoundDataset(Dataset):
         # print(index)
         audio_sample_path = self._get_audio_sample_path(index)
         signal, sr = torchaudio.load(audio_sample_path)
+        signal = self.audio_augmentation(signal)
         signal = self.transformation(signal)
+        signal = self.mel_augmentation(signal)
         # signal = self._resample_if_necessary(signal, sr)
         signal = self._cut_if_necessary(signal)
         signal = self._right_pad_if_necessary(signal)
         # signal = signal.repeat(3, 1, 1)
         # signal = torch.squeeze(signal)
         # signal = self.transformation(signal)
-        if self.lable == True:  # WHEN WE TRAIN
+        if self.lable:  # WHEN WE TRAIN
             label = self._get_audio_sample_label(index)
             return signal, label
         else:  # WHEN WE PREDICT
