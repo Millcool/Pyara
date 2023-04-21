@@ -8,7 +8,7 @@ from scipy.interpolate import interp1d
 from scipy.optimize import brentq
 from sklearn.metrics import confusion_matrix, f1_score, roc_auc_score, roc_curve
 import copy
-
+from sklearn.metrics import matthews_corrcoef
 from config import CFG
 from metrics import AverageMeter, min_tDCF
 
@@ -54,6 +54,7 @@ def train_model(model, optimizer, train_loader, valid_loader, criterion, directo
         ###################################################################################################################
         full_vec = []
         full_labels = []
+        full_MCC_out = []
         validation_loss_meter = AverageMeter()
         validation_accuracy_meter = AverageMeter()
         validation_f1_meter = AverageMeter()
@@ -80,6 +81,8 @@ def train_model(model, optimizer, train_loader, valid_loader, criterion, directo
                 labels = label.cpu().numpy()
                 full_vec.extend(out2)
                 full_labels.extend(labels)
+                oouutt = output.argmax(dim=-1).cpu().numpy()
+                full_MCC_out.extend(oouutt)
             # print(f'output :{output.argmax(dim=-1)}, label : {label}')
 
             matches = (output.argmax(dim=-1) == label).float().mean()
@@ -116,7 +119,8 @@ def train_model(model, optimizer, train_loader, valid_loader, criterion, directo
         print(f'EER : {EER}%')
 
         auc = roc_auc_score(full_labels, full_vec)
-
+        MCC = matthews_corrcoef(full_labels, full_MCC_out)
+        print(f'MCC : {MCC}')
         storage['validation_loss'].append(validation_loss_meter.avg)
         storage['validation_accuracy'].append(validation_accuracy_meter.avg)
         storage['validation_F1_score'].append(validation_f1_meter.avg)
@@ -128,7 +132,9 @@ def train_model(model, optimizer, train_loader, valid_loader, criterion, directo
                    "Validation F1 score": validation_f1_meter.avg,
                    "Validation EER": EER,
                    "Valiation min-tDCF": validation_MinDCF_meter.avg,
-                   "Validation_AUC": auc})
+                   "Validation_AUC": auc,
+                   "Validation_MCC": MCC})
+
     ################### Save Last Epoch ##########################################
     best_model_wts = copy.deepcopy(model.state_dict())
     PATH = f"./{directory}/Last_epoch.bin"

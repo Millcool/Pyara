@@ -12,6 +12,7 @@ from tqdm.auto import tqdm
 
 from config import CFG
 from metrics import AverageMeter, min_tDCF
+from sklearn.metrics import matthews_corrcoef
 
 
 def test_model(test_loader, model):
@@ -23,6 +24,7 @@ def test_model(test_loader, model):
     all_matrix = [[0, 0], [0, 0]]
     full_vec = []
     full_labels = []
+    full_MCC_out = []
     for i, batch in enumerate(tqdm(test_loader)):
         # Move batch to device if device != 'cpu'
         wav = batch[0].to(CFG.device)
@@ -31,6 +33,7 @@ def test_model(test_loader, model):
         label = label.reshape(len(label))
         label = torch.tensor(label).long()
         wav = wav.squeeze()
+        # print(wav.shape)
         with torch.no_grad():
             output = model(wav)
             out = output.argmax(dim=-1).cpu().numpy()
@@ -42,6 +45,9 @@ def test_model(test_loader, model):
             full_vec.extend(out2)
             full_labels.extend(labels)
         # print(f'output :{output.argmax(dim=-1)}, label : {label}')
+
+        MCC_out = output.argmax(dim=-1).cpu().numpy()
+        full_MCC_out.extend(MCC_out)
 
         matches = (output.argmax(dim=-1) == label).float().mean()
         f1 = f1_score(output.argmax(dim=-1).cpu(), label.cpu(), average='weighted')
@@ -64,12 +70,16 @@ def test_model(test_loader, model):
     print(f'EER : {EER}%')
 
     test_auc = metrics.roc_auc_score(full_labels, full_vec)
+    MCC = matthews_corrcoef(full_labels, full_MCC_out)
+    print(f'MCC : {MCC}')
+    print(f'Confusion Matrix of all:{all_matrix}')
+    print(f'Accuracy on Test Dataset:{test_accuracy_meter.avg} !')
+    # display.clear_output()
     wandb.log({
         "Test Accuracy": test_accuracy_meter.avg,
         "Test F1 score": test_f1_meter.avg,
         "Test EER": EER,
         "Test min-tDCF": mDCF,
-        "Test_AUC": test_auc})
+        "Test_AUC": test_auc,
+        "Test_MCC": MCC})
     # display.clear_output()
-    print(f'Confusion Matrix of all:{all_matrix}')
-    print(f'Accuracy on Test Dataset:{test_accuracy_meter.avg} !')

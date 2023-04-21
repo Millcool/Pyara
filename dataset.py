@@ -5,19 +5,23 @@ import torchaudio
 from torch.utils.data import Dataset
 from torch import distributions
 from config import CFG
+from transforms import probability_augmentetion
+import matplotlib.pyplot as plt
+from visualizations import *
 
 
-class UrbanSoundDataset(Dataset):
+class PyaraSoundDataset(Dataset):
 
     def __init__(self,
                  annotations_file,
                  audio_dir,
-                 audio_augmentations,
-                 mel_augmentations,
                  transformation,
                  target_sample_rate,
                  num_samples,
+                 audio_augmentations=None,
+                 mel_augmentations=None,
                  lable=False):
+
         self.annotations = annotations_file
         self.audio_dir = audio_dir
         self.audio_augmentation = audio_augmentations
@@ -31,23 +35,72 @@ class UrbanSoundDataset(Dataset):
         return len(self.audio_dir)
 
     def __getitem__(self, index):
-        # print(index)
         audio_sample_path = self._get_audio_sample_path(index)
+
         signal, sr = torchaudio.load(audio_sample_path)
-        signal = self.audio_augmentation(signal)
+        if signal.shape == (2, signal.shape[1]):
+            signal = signal[0]
+            signal = signal.unsqueeze(0)
+        if CFG.visualize:
+            print(f'This is audio with name: {audio_sample_path} !')
+            print(f'AUDIO WITHOUT AUGMENTATIONS')
+            visualize_audio(signal, sr=sr)
+
+            mel = self.transformation(signal)
+            print(F'MEL SPECTROGRAM WITHOUT AUGMENTATIONS')
+            plt.figure(figsize=(20, 5))
+            plt.imshow(mel.permute(1, 2, 0).squeeze().log())
+            plt.title(f'Log Mel Spectrogram of before augmentations ', fontsize=22)
+            plt.xlabel('Time', size=20)
+            plt.ylabel('Mels', size=20)
+            plt.show()
+
+        if self.audio_augmentation != None:
+            if probability_augmentetion(0.5):
+                signal = self.audio_augmentation(signal)
+
+            if CFG.visualize:
+                print(f'AUDIO AFTER AUGMENTATIONS')
+                visualize_audio(signal, sr=CFG.SAMPLE_RATE)
+
         signal = self.transformation(signal)
-        signal = self.mel_augmentation(signal)
+
+        if CFG.visualize:
+            mel = signal
+            plt.figure(figsize=(20, 5))
+            plt.imshow(mel.permute(1, 2, 0).squeeze().log())
+            plt.title(f'Log Mel Spectrogram of before augmentations ', fontsize=22)
+            plt.xlabel('Time', size=20)
+            plt.ylabel('Mels', size=20)
+            plt.show()
+
+        if self.mel_augmentations != None:
+            signal = self.mel_augmentations(signal)
+
         # signal = self._resample_if_necessary(signal, sr)
         signal = self._cut_if_necessary(signal)
+
         signal = self._right_pad_if_necessary(signal)
         # signal = signal.repeat(3, 1, 1)
         # signal = torch.squeeze(signal)
         # signal = self.transformation(signal)
-        if self.lable:  # WHEN WE TRAIN
-            label = self._get_audio_sample_label(index)
-            return signal, label
-        else:  # WHEN WE PREDICT
-            return signal, torch.randint(0, 1, (1,))
+        label = self._get_audio_sample_label(index)
+
+        if CFG.visualize:
+            print(f'LABEL = {label}')
+            mel = signal
+            if int(label) == 1:
+                title_lable = 'Fake'
+            else:
+                title_lable = 'Real'
+            plt.figure(figsize=(20, 5))
+            plt.imshow(mel.permute(1, 2, 0).squeeze().log())
+            plt.title(f'Log Mel Spectrogram of {title_lable} audio after padding and augmentations', fontsize=22)
+            plt.xlabel('Time', size=20)
+            plt.ylabel('Mels', size=20)
+            plt.show()
+        # signal = signal.repeat(3,1,1)
+        return signal, label
 
     def _cut_if_necessary(self, signal):
         if signal.shape[2] > CFG.width:
@@ -58,8 +111,15 @@ class UrbanSoundDataset(Dataset):
         length_signal = signal.shape[2]
         if length_signal < CFG.width:
             num_missing_samples = CFG.width - length_signal
-            last_dim_padding = (0, num_missing_samples)
-            signal = torch.nn.functional.pad(signal, last_dim_padding)
+            times_to_add = num_missing_samples // length_signal + 1
+            sig_add = signal
+            for i in range(times_to_add):
+                signal = torch.cat((signal, sig_add), 2)
+            if signal.shape[2] > CFG.width:
+                signal = signal[:, :, 0:CFG.width]
+
+            # last_dim_padding = (0, num_missing_samples)
+            # signal = torch.nn.functional.pad(signal, last_dim_padding)
         return signal
 
     def _resample_if_necessary(self, signal, sr):
@@ -74,12 +134,21 @@ class UrbanSoundDataset(Dataset):
         return signal
 
     def _get_audio_sample_path(self, index):
-        path = self.audio_dir[index]
-        if self.lable == True:
-            path = os.path.join(CFG.train_path, path)
+        if CFG.DATASET == 'RUS':
+            path = self.audio_dir[index]
+            if self.lable == True:
+                path = os.path.join(CFG.train_path, path)
+            else:
+                path = os.path.join(CFG.test_path, path)
         else:
-            path = os.path.join(CFG.test_path, path)
-        path = path + '.flac'
+            path = self.audio_dir[index]
+            if self.lable == True:
+
+                path = os.path.join(CFG.train_path, path)
+            else:
+
+                path = os.path.join(CFG.test_path, path)
+
         return path
 
     def _get_audio_sample_label(self, index):
@@ -87,7 +156,9 @@ class UrbanSoundDataset(Dataset):
         # print(path)
         df = self.annotations
         df = df.loc[lambda df: df['path'] == path]
-        # print(df.head())
         num = list(df['fake'])
-        # print(num)
         return torch.Tensor(num)
+
+
+
+

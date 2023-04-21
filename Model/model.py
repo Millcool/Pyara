@@ -4,6 +4,7 @@ Module for where models described
 from torch import nn
 
 from config import CFG
+import torch
 
 
 class ResNetBlock(nn.Module):
@@ -60,6 +61,7 @@ class MFCCModel(nn.Module):
         self.logsoftmax = nn.LogSoftmax(dim=1)
         self.fc1 = nn.Linear(32, 128)
         self.fc2 = nn.Linear(128, 2)
+        self.model_name = 'CNN_model_ResNet'
 
     def forward(self, x):
         batch_size = x.size(0)
@@ -89,22 +91,21 @@ class MFCCModel(nn.Module):
 
 
 class LSTM(nn.Module):
-
     # define all the layers used in model
     def __init__(self, input_dim=80, hidden_size=128):
         super().__init__()
         self.input_dim = input_dim
         self.hidden_size = hidden_size
-
+        self.model_name = 'LSTM_model'
         self.lstm = nn.LSTM(input_size=input_dim,
                             hidden_size=hidden_size,
-                            num_layers=4,
+                            num_layers=CFG.lstm_layers,
                             batch_first=True,
                             bidirectional=False)
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.5)
         self.clf = nn.Linear(hidden_size, 2)
-        self._fc = nn.Sequential(
+        self._fc = torch.nn.Sequential(
             nn.Linear(in_features=128, out_features=64, bias=True),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5, inplace=False),
