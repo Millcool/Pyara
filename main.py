@@ -29,16 +29,17 @@ elif CFG.model_name == 'CNN':
     model = MFCCModel().to(CFG.device)
     CFG.wandb_run_name = f"LFCC {CFG.model_name},  Epochs: {CFG.epochs}, Samples: {CFG.num_item_all},BS: {CFG.train_bs}, "
 else:
-    model = EfficientNet.from_pretrained(model_name)  # , num_classes=3
+    #model = EfficientNet.from_pretrained(model_name)  # , num_classes=3
+    pass
 
-    model._fc = torch.nn.Sequential(
-        nn.Linear(in_features=1280, out_features=625, bias=True),
-        nn.ReLU(inplace=True),
-        nn.Dropout(p=0.5, inplace=False),
-        nn.Linear(in_features=625, out_features=256, bias=True),
-        nn.ReLU(inplace=True),
-        nn.Linear(in_features=256, out_features=2, bias=True))
-    CFG.wandb_run_name = f"Efficientnet {CFG.model_name},  Epochs: {CFG.epochs}, Samples: {CFG.num_item_all},BS: {CFG.train_bs}, "
+    # model._fc = torch.nn.Sequential(
+    #     nn.Linear(in_features=1280, out_features=625, bias=True),
+    #     nn.ReLU(inplace=True),
+    #     nn.Dropout(p=0.5, inplace=False),
+    #     nn.Linear(in_features=625, out_features=256, bias=True),
+    #     nn.ReLU(inplace=True),
+    #     nn.Linear(in_features=256, out_features=2, bias=True))
+    # CFG.wandb_run_name = f"Efficientnet {CFG.model_name},  Epochs: {CFG.epochs}, Samples: {CFG.num_item_all},BS: {CFG.train_bs}, "
 
 
 model.eval()

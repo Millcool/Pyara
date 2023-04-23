@@ -8,7 +8,7 @@ class CFG:
     Class with main variables, which we can modify
     """
     JUST_PREDICT = False
-    DEBUG = True
+    DEBUG = False
     DATASET = 'ASV_600'
     Docker = True
     visualize = False
@@ -17,7 +17,7 @@ class CFG:
 
     seed = 101
     model_name = 'CNN'
-    info = 'DOCKER_CNN_ASV_600_TEST'
+    info = 'DOCKER_CNN_ASV_600'
     archive_name = 'Audio'
     width = 300
     train_bs = 128
