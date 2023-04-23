@@ -1,4 +1,5 @@
 run:
+	docker build -t cnn_asv_600:v1
     docker run -d -v E:/Audio/ASV/equal_audio:/app/data --name equal equal:test
 stop:
 

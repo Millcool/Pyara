@@ -1,2 +1,5 @@
 Wandb_token.py
 .idea
+wandb
+venv
+wandb/
