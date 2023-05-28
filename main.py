@@ -20,4 +20,4 @@ def predict_audio(file_path):
     return pred
 
 
-predict_audio("mozila11_0.wav")
+# print(predict_audio("mozila11_0.wav"))
