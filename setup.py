@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 
-requirements = ["scipy>=1.7.3", "soundfile>=0.12.1", "torch>=1.13.1", "torchaudio>=0.13.1"]
+requirements = []
 
 # Создаст библиотеку для загрузки на PyPI
 setup(name='Pyara',
