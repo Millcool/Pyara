@@ -3,7 +3,7 @@
 import torch
 import torchaudio
 
-from config import CFG
+from pyara.config import CFG
 
 
 def cut_if_necessary(signal):
