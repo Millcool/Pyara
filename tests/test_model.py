@@ -1,7 +1,6 @@
 import torch
-import torch.nn as nn
 import unittest
-from Model.model import ResNetBlock, MFCCModel, model_eval
+from pyara.Model.model import ResNetBlock, MFCCModel, model_eval
 
 class TestResNetBlock(unittest.TestCase):
     def setUp(self):
