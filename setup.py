@@ -6,7 +6,7 @@ requirements = []
 
 # Создаст библиотеку для загрузки на PyPI
 setup(name='Pyara',
-      version='0.1.2',
+      version='0.1.3',
       url='https://github.com/Millcool/Pyara.git',
       license='MIT',
       author='Ilya Mironov',
@@ -17,8 +17,10 @@ setup(name='Pyara',
       packages=find_packages(exclude=['tests']),
       zip_safe=False,
       install_requires=requirements,
+      platform = 'Any',
       classifiers=[
             "Programming Language :: Python :: 3.7",
             "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+            "Operating System :: OS Independent"
       ],
       )

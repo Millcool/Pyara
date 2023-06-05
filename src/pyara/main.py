@@ -1,6 +1,6 @@
 """Module for audio classification"""
 from pyara.Model.model import model_eval
-from audio_prepare import prediction, prepare_signal
+from pyara.audio_prepare import prediction, prepare_signal
 
 
 def predict_audio(file_path):
@@ -20,7 +20,7 @@ def predict_audio(file_path):
     return pred
 
 
-# print(predict_audio("mozila11_0.wav"))
+print(predict_audio("mozila11_0.wav"))
 def convert(my_name):
     """
     Print a line about converting a notebook.
