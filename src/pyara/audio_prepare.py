@@ -5,6 +5,7 @@ import torchaudio
 
 from pyara.config import CFG
 
+# TODO __all__ во всех файлах чтобы в import опадали только написанные функции
 
 def cut_if_necessary(signal):
     """cuts the audio signal to CFG.width samples """
