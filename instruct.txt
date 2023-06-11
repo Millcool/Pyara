@@ -14,7 +14,7 @@ python setup.py sdist bdist_wheel - чтобы создать и архив и w
 twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 
-Установка библиотеки pip install -i https://test.pypi.org/simple/ Pyara==0.1.3
+Установка библиотеки pip install -i https://test.pypi.org/simple/ Pyara==0.1.5
 
 Загрузка на PyPi
 
