@@ -3,7 +3,7 @@
 import torch
 import torchaudio
 
-from pyara.config import CFG
+from config import CFG
 
 # TODO __all__ во всех файлах чтобы в import опадали только написанные функции
 
