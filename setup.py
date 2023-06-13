@@ -1,13 +1,13 @@
 """Metadata of package"""
 from setuptools import setup, find_packages
 
-requirements = ['torch',
-                'torchaudio'
+requirements = ['torch>=1.13.1',
+                'torchaudio>=0.13.1'
                 ]
 
 # Создаст библиотеку для загрузки на PyPI
 setup(name='Pyara',
-      version='0.1.9',
+      version='0.1.10',
       url='https://github.com/Millcool/Pyara.git',
       license='MIT',
       author='Ilya Mironov',
