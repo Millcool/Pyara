@@ -4,7 +4,7 @@ Module for where models described
 import torch
 from torch import nn
 
-from pyara.config import CFG
+from src.pyara.config import CFG
 
 
 class ResNetBlock(nn.Module):
