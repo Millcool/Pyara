@@ -1,6 +1,6 @@
 """Module for audio classification"""
-from Model.model import model_eval
-from audio_prepare import prediction, prepare_signal
+from src.pyara.Model.model import model_eval
+from src.pyara.audio_prepare import prediction, prepare_signal
 
 
 def predict_audio(file_path):

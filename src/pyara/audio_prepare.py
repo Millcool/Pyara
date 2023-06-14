@@ -3,7 +3,7 @@
 import torch
 import torchaudio
 
-from config import CFG
+from src.pyara.config import CFG
 
 # TODO __all__ во всех файлах чтобы в import опадали только написанные функции
 
