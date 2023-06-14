@@ -9,7 +9,6 @@ Pyara.egg-info/dependency_links.txt
 Pyara.egg-info/not-zip-safe
 Pyara.egg-info/requires.txt
 Pyara.egg-info/top_level.txt
-src/__init__.py
 src/pyara/__init__.py
 src/pyara/audio_prepare.py
 src/pyara/config.py

@@ -4,7 +4,7 @@ Module for where models described
 import torch
 from torch import nn
 
-from src.pyara.config import CFG
+from pyara.config import CFG
 
 
 class ResNetBlock(nn.Module):
@@ -115,7 +115,7 @@ def model_eval():
     """Function for model Evaluation"""
 
     model = MFCCModel()
-    model.load_state_dict(torch.load('Model_weights.bin',
+    model.load_state_dict(torch.load('pyara.Model_weights.bin',
                                      map_location=torch.device('cpu')))
     model.eval()
     model.to(CFG.device)

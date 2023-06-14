@@ -1,9 +1,9 @@
 import torch
 import torchaudio
 import unittest
-from pyara.config import CFG
-from pyara.audio_prepare import cut_if_necessary, right_pad_if_necessary, prepare_signal, prediction, MFCC_spectrogram
-from pyara.Model.model import model_eval
+from pyara import CFG
+from pyara import cut_if_necessary, right_pad_if_necessary, prepare_signal, prediction, MFCC_spectrogram
+from pyara import model_eval
 
 class TestFunctions(unittest.TestCase):
     def test_cut_if_necessary(self):
