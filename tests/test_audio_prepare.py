@@ -27,7 +27,7 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(right_pad_if_necessary(signal), signal)
 
     def test_prepare_signal(self):
-        voice_path = "../src/pyara/mozila11_0.wav"
+        voice_path = "../pyara/mozila11_0.wav"
         signal, sample_rate = torchaudio.load(voice_path)
         expected_output = signal.mean(dim=0)
         expected_output = expected_output.unsqueeze(dim=0)
