@@ -20,7 +20,6 @@ def predict_audio(file_path):
     return pred
 
 
-print(predict_audio("mozila11_0.wav"))
 def convert(my_name):
     """
     Print a line about converting a notebook.
@@ -31,3 +30,7 @@ def convert(my_name):
     """
 
     print(f"I'll convert a notebook for you some day, {my_name}.")
+
+
+if __name__ == '__main__':
+    print(predict_audio("mozila11_0.wav"))
