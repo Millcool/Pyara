@@ -1,5 +1,5 @@
 """Metadata of package"""
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages   # ,  pkg_resources
 
 requirements = ['torch>=1.13.1',
                 'torchaudio>=0.13.1'
@@ -7,7 +7,7 @@ requirements = ['torch>=1.13.1',
 
 # Создаст библиотеку для загрузки на PyPI
 setup(name='Pyara',
-      version='0.1.19',
+      version='0.1.25',
       url='https://github.com/Millcool/Pyara.git',
       license='MIT',
       author='Ilya Mironov',
@@ -15,7 +15,10 @@ setup(name='Pyara',
       description='Library for audio classification',
       long_description=open('README.md').read(),
       long_description_content_type="text/markdown",
-      packages=find_packages( exclude=['tests']), #where='src', include=['pyara*'],
+      packages=find_packages(exclude=['tests']), #where='src', include=['pyara*'],
+      #package_dir={"":"src"},
+      package_data={"pyara": ["*.bin"]},
+      include_package_data=True,
       zip_safe=False,
       install_requires=requirements,
       platform='Any',
