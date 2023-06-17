@@ -4,11 +4,12 @@ from setuptools import setup, find_packages   # ,  pkg_resources
 requirements = ['torch>=1.13.1',
                 'torchaudio>=0.13.1',
                 'soundfile==0.12.1',
+                'numpy'
                 ]
 
 # Создаст библиотеку для загрузки на PyPI
 setup(name='Pyara',
-      version='0.1.28',
+      version='0.1.29',
       url='https://github.com/Millcool/Pyara.git',
       license='MIT',
       author='Ilya Mironov',
