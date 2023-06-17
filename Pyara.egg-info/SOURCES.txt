@@ -15,12 +15,12 @@ Pyara.egg-info/dependency_links.txt
 Pyara.egg-info/not-zip-safe
 Pyara.egg-info/requires.txt
 Pyara.egg-info/top_level.txt
-pyara/Model_weights.bin
 pyara/__init__.py
 pyara/audio_prepare.py
 pyara/config.py
 pyara/main.py
 pyara/mozila11_0.wav
 pyara/some.txt
+pyara/Model/Model_weights.bin
 pyara/Model/__init__.py
 pyara/Model/model.py
