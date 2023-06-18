@@ -1,6 +1,9 @@
-import torch
 import unittest
-from pyara import ResNetBlock, MFCCModel, model_eval
+
+import torch
+
+from pyara.Model.model import ResNetBlock, MFCCModel, model_eval
+
 
 class TestResNetBlock(unittest.TestCase):
     def setUp(self):
@@ -14,7 +17,7 @@ class TestResNetBlock(unittest.TestCase):
 
         output = self.block(signal)
 
-        self.assertEqual(output.shape, (batch_size, 16, T/2))
+        self.assertEqual(output.shape, (batch_size, 16, T / 2))
 
 
 class TestMFCCModel(unittest.TestCase):

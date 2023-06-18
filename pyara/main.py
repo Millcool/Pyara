@@ -1,36 +1,29 @@
-"""Module for audio classification"""
+"""
+Module for audio classification
+"""
 from pyara.Model.model import model_eval
 from pyara.audio_prepare import prediction, prepare_signal
+from pyara.config import CFG
 
 
 def predict_audio(file_path):
     """
-    Function for audio syntesized/real prediction
+    Function for audio syntesized / bonafide prediction
 
     :param file_path: path to the file
     :return: prediction about audio
-    0: if real voice
+    0: if bonafide voice
     1: if syntesized voice
     """
+
     # Model to predict
     model = model_eval()
-    signal = prepare_signal(file_path)
+    signal = prepare_signal(file_path, width=CFG.width)
 
-    pred = prediction(model, signal)
-    return pred
+    prediction_of_model = prediction(model, signal)
 
-
-def convert(my_name):
-    """
-    Print a line about converting a notebook.
-    Args:
-        my_name (str): person's name
-    Returns:
-        None
-    """
-
-    print(f"I'll convert a notebook for you some day, {my_name}.")
+    return prediction_of_model
 
 
 if __name__ == '__main__':
-    print(predict_audio("mozila11_0.wav"))
+    print(predict_audio("mozila11_1.wav"))

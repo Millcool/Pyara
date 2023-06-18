@@ -5,17 +5,18 @@ import torchaudio
 
 from pyara.config import CFG
 
+
 # TODO __all__ во всех файлах чтобы в import опадали только написанные функции
 
-def cut_if_necessary(signal):
+def cut_if_necessary(signal, width=CFG.width):
     """cuts the audio signal to CFG.width samples """
 
-    if signal.shape[2] > CFG.width:
-        signal = signal[:, :, 0:CFG.width]
+    if signal.shape[2] > width:
+        signal = signal[:, :, 0:width]
     return signal
 
 
-def right_pad_if_necessary(signal):
+def right_pad_if_necessary(signal, width=CFG.width):
     """
      Выполняет дополнение последнего измерения входного сигнала вправо, если необходимо.
 
@@ -29,14 +30,14 @@ def right_pad_if_necessary(signal):
 
      """
     length_signal = signal.shape[2]
-    if length_signal < CFG.width:
-        num_missing_samples = CFG.width - length_signal
+    if length_signal < width:
+        num_missing_samples = width - length_signal
         last_dim_padding = (0, num_missing_samples)
         signal = torch.nn.functional.pad(signal, last_dim_padding)
     return signal
 
 
-def prepare_signal(voice_path):
+def prepare_signal(voice_path, width= CFG.width):
     """
       Подготавливает аудиосигнал для обработки.
 
@@ -74,12 +75,14 @@ def prepare_signal(voice_path):
 
     signal = MFCC_spectrogram(signal)
 
-    signal = cut_if_necessary(signal)
-    signal = right_pad_if_necessary(signal)
+#TODO сделать зависимость от args, kwargs
+    signal = cut_if_necessary(signal, width)
+    signal = right_pad_if_necessary(signal, width)
 
     signal = signal.repeat(3, 1, 1)
     signal = signal.unsqueeze(dim=0)
     signal = signal.to(CFG.device)
+    print(f'Audio signal prepared !')
     return signal
 
 
@@ -119,7 +122,6 @@ def prediction(model, signal):
     signal = signal.squeeze()
     with torch.no_grad():
         output = model(signal)
-        print(output)
         out = output.argmax(dim=-1).cpu().numpy()
     if out[0] == 1:
         return 1

@@ -8,7 +8,14 @@ from pyara.config import CFG
 
 
 class ResNetBlock(nn.Module):
-    """Class for ResNet Block description"""
+    """
+    Class representing a ResNet Block.
+
+    Args:
+        in_depth (int): Number of input channels.
+        depth (int): Number of output channels.
+        first (bool, optional): Whether it's the first block in the network. Defaults to False.
+    """
 
     def __init__(self, in_depth, depth, first=False):
         super(ResNetBlock,
@@ -34,7 +41,15 @@ class ResNetBlock(nn.Module):
             self.pre_bn = nn.BatchNorm2d(in_depth)
 
     def forward(self, signal):
-        """Forward method of model"""
+        """
+        Forward pass of the ResNet Block.
+
+        Args:
+            signal (torch.Tensor): Input tensor.
+
+        Returns:
+            torch.Tensor: Output tensor.
+        """
 
         # x is (B x d_in x T)
         prev = signal
@@ -56,7 +71,26 @@ class ResNetBlock(nn.Module):
 
 
 class MFCCModel(nn.Module):
-    """Class for model description"""
+    """
+    Class representing a MFCC Model.
+
+    Copy code
+    Attributes:
+        conv1 (nn.Conv2d): Convolutional layer 1.
+        block1-9 (ResNetBlock): ResNet blocks 1-9.
+        mp (nn.MaxPool2d): Max pooling layer.
+        lrelu (nn.LeakyReLU): LeakyReLU activation function.
+        bn (nn.BatchNorm2d): Batch normalization layer.
+        dropout (nn.Dropout): Dropout layer.
+        logsoftmax (nn.LogSoftmax): LogSoftmax activation function.
+        fc1 (nn.Linear): Fully connected layer 1.
+        fc2 (nn.Linear): Fully connected layer 2.
+        model_name (str): Name of the model.
+
+    Methods:
+        forward(signal): Performs a forward pass of the model.
+
+    """
 
     def __init__(self):
         super(MFCCModel, self).__init__()
@@ -83,7 +117,15 @@ class MFCCModel(nn.Module):
         self.model_name = 'CNN_model_ResNet'
 
     def forward(self, signal):
-        """Forward method of MFCCModel"""
+        """
+           Forward pass of the MFCC Model.
+
+           Args:
+               signal (torch.Tensor): Input tensor.
+
+           Returns:
+               torch.Tensor: Output tensor.
+        """
 
         batch_size = signal.size(0)
         signal = signal.unsqueeze(dim=1)
@@ -115,14 +157,12 @@ def model_eval():
     """Function for model Evaluation"""
 
     model = MFCCModel()
-    import os
-
-    module_path = os.path.dirname(__file__)  # Путь к текущему модулю (mylibrary.py)
+    module_path = os.path.dirname(__file__)
     weights_path = os.path.join(module_path,  'Model_weights.bin')
 
     model.load_state_dict(torch.load(weights_path,
                                      map_location=torch.device('cpu')))
     model.eval()
     model.to(CFG.device)
-    print(' Model Evaluated ! DONE !')
+    print('Model Evaluated!')
     return model
