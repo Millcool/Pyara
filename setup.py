@@ -3,8 +3,9 @@ from setuptools import setup, find_packages   # ,  pkg_resources
 
 requirements = ['torch>=1.13.1',
                 'torchaudio>=0.13.1',
-                'soundfile==0.12.1',
-                'numpy'
+                'soundfile==0.12.1'
+                ,'numpy'
+                ,'librosa'
                 ]
 
 # Создаст библиотеку для загрузки на PyPI

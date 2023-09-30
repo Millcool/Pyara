@@ -19,3 +19,5 @@ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 Загрузка на PyPi
 
 twine upload dist/*
+
+MANIFEST.in нужен чтобы добавлять в питоновскую библиотеку не только .py файлы, но и .bin и многие другие

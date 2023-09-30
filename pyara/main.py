@@ -6,24 +6,35 @@ from pyara.audio_prepare import prediction, prepare_signal
 from pyara.config import CFG
 
 
-def predict_audio(file_path):
+def predict_audio(file_path
+                  ,print_probability = False
+                  ,pitch_shift = 0
+                  ,width = CFG.width
+                  ,sample_rate = CFG.SAMPLE_RATE):
     """
-    Function for audio syntesized / bonafide prediction
+     Функция для предсказания аудио (синтезированного / подлинного).
 
-    :param file_path: path to the file
-    :return: prediction about audio
-    0: if bonafide voice
-    1: if syntesized voice
-    """
+     Параметры:
+         file_path (str): Путь к файлу.
+
+     Возвращает:
+         int: Предсказание аудио:
+             0: если аудио подлинное
+             1: если аудио синтезированное
+     """
 
     # Model to predict
     model = model_eval()
-    signal = prepare_signal(file_path, width=CFG.width)
+    # Можно доработать передавая больше параметров в функцию
+    # Например громкость, MFCC/LFCC, Ширина окна, длина дополнения/обрезки
+    signal = prepare_signal(file_path,  pitch_shift, width, sample_rate)
 
-    prediction_of_model = prediction(model, signal)
-
+    prediction_of_model, probability = prediction(model, signal)
+    if print_probability:
+        return f'Answer:{prediction_of_model} probability:{probability}'
+    #Если print_probability = False
     return prediction_of_model
 
 
 if __name__ == '__main__':
-    print(predict_audio("mozila11_1.wav"))
+    print(predict_audio("mozila11_1.wav", print_probability=True, pitch_shift=10))

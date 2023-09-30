@@ -9,12 +9,12 @@ from pyara.config import CFG
 
 class ResNetBlock(nn.Module):
     """
-    Class representing a ResNet Block.
+       Класс, представляющий блок ResNet.
 
-    Args:
-        in_depth (int): Number of input channels.
-        depth (int): Number of output channels.
-        first (bool, optional): Whether it's the first block in the network. Defaults to False.
+       Параметры:
+           in_depth (int): Количество входных каналов.
+           depth (int): Количество выходных каналов.
+           first (bool, опционально): Является ли блок первым в сети. По умолчанию False.
     """
 
     def __init__(self, in_depth, depth, first=False):
@@ -42,13 +42,13 @@ class ResNetBlock(nn.Module):
 
     def forward(self, signal):
         """
-        Forward pass of the ResNet Block.
+            Проход вперед для блока ResNet.
 
-        Args:
-            signal (torch.Tensor): Input tensor.
+            Параметры:
+                signal (torch.Tensor): Входной тензор.
 
-        Returns:
-            torch.Tensor: Output tensor.
+            Возвращает:
+                torch.Tensor: Выходной тензор.
         """
 
         # x is (B x d_in x T)
@@ -72,24 +72,22 @@ class ResNetBlock(nn.Module):
 
 class MFCCModel(nn.Module):
     """
-    Class representing a MFCC Model.
+    Класс, представляющий MFCC-модель.
 
-    Copy code
-    Attributes:
-        conv1 (nn.Conv2d): Convolutional layer 1.
-        block1-9 (ResNetBlock): ResNet blocks 1-9.
-        mp (nn.MaxPool2d): Max pooling layer.
-        lrelu (nn.LeakyReLU): LeakyReLU activation function.
-        bn (nn.BatchNorm2d): Batch normalization layer.
-        dropout (nn.Dropout): Dropout layer.
-        logsoftmax (nn.LogSoftmax): LogSoftmax activation function.
-        fc1 (nn.Linear): Fully connected layer 1.
-        fc2 (nn.Linear): Fully connected layer 2.
-        model_name (str): Name of the model.
+    Атрибуты:
+        conv1 (nn.Conv2d): Слой свертки 1.
+        block1-9 (ResNetBlock): Блоки ResNet 1-9.
+        mp (nn.MaxPool2d): Слой максимального пулинга.
+        lrelu (nn.LeakyReLU): Функция активации LeakyReLU.
+        bn (nn.BatchNorm2d): Слой нормализации пакета.
+        dropout (nn.Dropout): Слой исключения.
+        logsoftmax (nn.LogSoftmax): Функция активации LogSoftmax.
+        fc1 (nn.Linear): Полносвязный слой 1.
+        fc2 (nn.Linear): Полносвязный слой 2.
+        model_name (str): Название модели.
 
-    Methods:
-        forward(signal): Performs a forward pass of the model.
-
+    Методы:
+        forward(signal): Выполняет проход вперед по модели.
     """
 
     def __init__(self):
@@ -118,13 +116,13 @@ class MFCCModel(nn.Module):
 
     def forward(self, signal):
         """
-           Forward pass of the MFCC Model.
+        Проход вперед для модели MFCC.
 
-           Args:
-               signal (torch.Tensor): Input tensor.
+        Параметры:
+            signal (torch.Tensor): Входной тензор.
 
-           Returns:
-               torch.Tensor: Output tensor.
+        Возвращает:
+            torch.Tensor: Выходной тензор.
         """
 
         batch_size = signal.size(0)
@@ -154,7 +152,16 @@ class MFCCModel(nn.Module):
 
 
 def model_eval():
-    """Function for model Evaluation"""
+    """
+        Функция для оценки модели.
+
+        Создает экземпляр MFCCModel, загружает веса модели из файла 'Model_weights.bin',
+        переводит модель в режим оценки (evaluation), перемещает модель на устройство,
+        определенное в CFG.device и возвращает модель.
+
+        Возвращает:
+            MFCCModel: Экземпляр модели
+    """
 
     model = MFCCModel()
     module_path = os.path.dirname(__file__)

@@ -1,13 +1,13 @@
-"""Module for configuration """
+"""Модуль для конфигурации """
 import torch
 
 
 class CFG:
     """
-    Class with main variables, which we can modify
-    activation:
-        None: model will return predict 0 or 1
-        Softmax: model will return two probabilities of classes
+        Класс с основными переменными, которые можно модифицировать.
+        activation:
+            None: модель будет возвращать предсказание 0 или 1.
+            Softmax: модель будет возвращать две вероятности классов.
     """
     JUST_PREDICT = False
     DEBUG = False

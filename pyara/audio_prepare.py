@@ -1,5 +1,6 @@
-"""Module for audio prepare"""
+"""Модуль в котором описаны функции для предобработки аудио"""
 
+import librosa
 import torch
 import torchaudio
 
@@ -9,7 +10,16 @@ from pyara.config import CFG
 # TODO __all__ во всех файлах чтобы в import опадали только написанные функции
 
 def cut_if_necessary(signal, width=CFG.width):
-    """cuts the audio signal to CFG.width samples """
+    """
+        Обрезает аудиосигнал до CFG.width выборок.
+
+        Параметры:
+            signal (torch.Tensor): Аудиосигнал.
+            width (int, опционально): Ширина сигнала после обрезки. По умолчанию CFG.width.
+
+        Возвращает:
+            torch.Tensor: Обрезанный аудиосигнал.
+    """
 
     if signal.shape[2] > width:
         signal = signal[:, :, 0:width]
@@ -37,7 +47,10 @@ def right_pad_if_necessary(signal, width=CFG.width):
     return signal
 
 
-def prepare_signal(voice_path, width= CFG.width):
+def prepare_signal(voice_path
+                   , pitch_shift=0
+                   , width=CFG.width
+                   , sample_rate=CFG.SAMPLE_RATE):
     """
       Подготавливает аудиосигнал для обработки.
 
@@ -72,10 +85,12 @@ def prepare_signal(voice_path, width= CFG.width):
     signal, sample_rate = torchaudio.load(voice_path)
     signal = signal.mean(dim=0)
     signal = signal.unsqueeze(dim=0)
-
+    if pitch_shift != 0:
+        signal = librosa.effects.pitch_shift(signal.numpy(), sr=sample_rate, n_steps=pitch_shift)
+        signal = torch.from_numpy(signal)
     signal = MFCC_spectrogram(signal)
 
-#TODO сделать зависимость от args, kwargs
+    # TODO сделать зависимость от args, kwargs
     signal = cut_if_necessary(signal, width)
     signal = right_pad_if_necessary(signal, width)
 
@@ -86,7 +101,7 @@ def prepare_signal(voice_path, width= CFG.width):
     return signal
 
 
-def prediction(model, signal):
+def prediction(model, signal, print_probability=False):
     """
     Функция prediction выполняет предсказание с использованием заданной модели для входного сигнала.
 
@@ -119,14 +134,20 @@ def prediction(model, signal):
     ```
     """
     model = model.to(CFG.device)
+
     signal = signal.squeeze()
     with torch.no_grad():
         output = model(signal)
+        print(output)
+        soft = torch.nn.Softmax(dim=1)
+        output = soft(output)
+        print(round(float(output[0][0]), 2))
         out = output.argmax(dim=-1).cpu().numpy()
+        print(out)
     if out[0] == 1:
-        return 1
+        return (1, round(float(output[0][0]), 2))
     elif out[0] == 0:
-        return 0
+        return (0, round(float(output[0][0]), 2))
 
     return 0
 
@@ -145,3 +166,49 @@ MFCC_spectrogram = torchaudio.transforms.MFCC(
         'center': False
     },
 )
+
+
+def prediction_multiple(model, signals):
+    """
+    Функция prediction выполняет предсказание с использованием заданной модели для входного сигнала.
+
+    Параметры:
+    - model: Модель, которая будет использоваться для предсказания. Должна быть совместима с PyTorch
+     и иметь метод forward для выполнения прямого прохода.
+    - signal: Можно подать несколько входных сигналов. Входной сигнал, для которого будет выполнено предсказание.
+    Должен быть трехмерным тензором с размерностью [batch_size, num_channels, signal_length].
+
+    Возвращает:
+    - Предсказанную метку класса для входного сигнала.
+    Возвращается значение 1, если модель предсказывает синтезированный голос, и 0,
+     если модель предсказывает реальный голос.
+
+    Пример использования:
+    ```python
+    import torch
+
+    # Создать модель
+    model = MyModel()
+
+    # Создать входной сигнал
+    signal = torch.randn(1, 3, 100)
+    # Размерность сигнала: [batch_size=1, num_channels=3, signal_length=100]
+
+    # Выполнить предсказание
+    prediction = prediction(model, signal)
+
+    print(prediction)  # Выводит: 1
+    ```
+    """
+    model = model.to(CFG.device)
+    for signal in signals:
+        signal = signal.squeeze()
+        with torch.no_grad():
+            output = model(signal)
+            out = output.argmax(dim=-1).cpu().numpy()
+        if out[0] == 1:
+            return 1
+        elif out[0] == 0:
+            return 0
+
+        return 0
