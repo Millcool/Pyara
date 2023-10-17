@@ -100,6 +100,63 @@ def prepare_signal(voice_path
     print(f'Audio signal prepared !')
     return signal
 
+def prepare_signals(voice_paths
+                   , pitch_shift=0
+                   , width=CFG.width
+                   , sample_rate=CFG.SAMPLE_RATE):
+    """
+      Подготавливает аудиосигнал для обработки.
+
+      Аргументы:
+      - voice_path (str): Путь к аудиофайлу.
+
+      Возвращает:
+      - signal (torch.Tensor): Подготовленный сигнал для обработки.
+
+      Шаги подготовки сигнала:
+      1. Загрузка аудиофайла с помощью функции `torchaudio.load(voice_path)`.
+      Возвращает сигнал `signal` и частоту дискретизации `sr`.
+      2. Усреднение сигнала `signal` по первому измерению (каналам),
+       используя функцию `signal.mean(dim=0)`.
+      3. Добавление размерности пакета (batch) к сигналу `signal`,
+      используя функцию `signal.unsqueeze(dim=0)`.
+      4. Применение преобразования MFCC (Mel-frequency cepstral coefficients)
+      к сигналу `signal` с помощью функции `MFCC_spectrogram(signal)`.
+         В результате получается спектрограмма MFCC.
+      5. Обрезка спектрограммы `signal`, если необходимо,
+      с помощью функции `cut_if_necessary(signal)`.
+      6. Дополнение спектрограммы `signal`, если необходимо,
+      с помощью функции `right_pad_if_necessary(signal)`.
+      7. Повторение спектрограммы `signal` 3 раза по первому измерению (пакету),
+       используя функцию `signal.repeat(3, 1, 1)`.
+      8. Добавление размерности пакета (batch) к спектрограмме `signal`,
+       используя функцию `signal.unsqueeze(dim=0)`.
+      9. Перемещение спектрограммы `signal` на устройство (например, GPU),
+       указанное в `CFG.device`, с помощью функции `signal.to(CFG.device)`.
+      10. Возврат подготовленного сигнала `signal`.
+      """
+    res = []
+    for voice_path in voice_paths:
+        signal, sample_rate = torchaudio.load(voice_path)
+        signal = signal.mean(dim=0)
+        signal = signal.unsqueeze(dim=0)
+        if pitch_shift != 0:
+            signal = librosa.effects.pitch_shift(signal.numpy(), sr=sample_rate, n_steps=pitch_shift)
+            signal = torch.from_numpy(signal)
+        signal = MFCC_spectrogram(signal)
+
+        # TODO сделать зависимость от args, kwargs
+        signal = cut_if_necessary(signal, width)
+        signal = right_pad_if_necessary(signal, width)
+
+        signal = signal.repeat(3, 1, 1)
+        signal = signal.unsqueeze(dim=0)
+        signal = signal.to(CFG.device)
+        print(f'Audio signal prepared !')
+        res.append(signal)
+    return res
+
+
 
 def prediction(model, signal, print_probability=False):
     """
@@ -200,15 +257,21 @@ def prediction_multiple(model, signals):
     print(prediction)  # Выводит: 1
     ```
     """
+    res = []
+    val = []
     model = model.to(CFG.device)
     for signal in signals:
         signal = signal.squeeze()
         with torch.no_grad():
             output = model(signal)
+            soft = torch.nn.Softmax(dim=1)
+            output = soft(output)
             out = output.argmax(dim=-1).cpu().numpy()
         if out[0] == 1:
-            return 1
+            res.append(1)
+            val.append(round(float(output[0][0]), 2))
         elif out[0] == 0:
-            return 0
+            res.append(0)
+            val.append(round(float(output[0][0]), 2))
 
-        return 0
+    return [res, val]
