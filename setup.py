@@ -10,7 +10,7 @@ requirements = ['torch>=1.13.1',
 
 # Создаст библиотеку для загрузки на PyPI
 setup(name='Pyara',
-      version='0.2.0',
+      version='0.2.1',
       url='https://github.com/Millcool/Pyara.git',
       license='MIT',
       author='Ilya Mironov',
