@@ -10,10 +10,10 @@ requirements = ['torch>=1.13.1',
 
 # Создаст библиотеку для загрузки на PyPI
 setup(name='Pyara',
-      version='0.2.1',
+      version='1.0.0',
       url='https://github.com/Millcool/Pyara.git',
       license='MIT',
-      author='Ilya Mironov',
+      author='Ilya Mironov, Pavel Aleksandrov',
       author_email='ilyamironov210202@gmail.com',
       description='Library for audio classification',
       long_description=open('README.md').read(),

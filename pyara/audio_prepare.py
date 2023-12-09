@@ -28,7 +28,7 @@ def cut_if_necessary(signal, width=CFG.width):
 
 def right_pad_if_necessary(signal, width=CFG.width):
     """
-     Выполняет дополнение последнего измерения входного сигнала вправо, если необходимо.
+     Выполняет дополнение последнего измерения входного сигнала справа, если необходимо.
 
      Параметры:
      - signal (torch.Tensor): Тензор сигнала, представляющий многомерные данные.
@@ -90,7 +90,6 @@ def prepare_signal(voice_path
         signal = torch.from_numpy(signal)
     signal = MFCC_spectrogram(signal)
 
-    # TODO сделать зависимость от args, kwargs
     signal = cut_if_necessary(signal, width)
     signal = right_pad_if_necessary(signal, width)
 
