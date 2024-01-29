@@ -194,12 +194,9 @@ def prediction(model, signal, print_probability=False):
     signal = signal.squeeze()
     with torch.no_grad():
         output = model(signal)
-        print(output)
         soft = torch.nn.Softmax(dim=1)
         output = soft(output)
-        print(round(float(output[0][0]), 2))
         out = output.argmax(dim=-1).cpu().numpy()
-        print(out)
     if out[0] == 1:
         return (1, round(float(output[0][0]), 2))
     elif out[0] == 0:

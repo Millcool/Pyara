@@ -35,4 +35,4 @@ def predict_audio(file_path
 
 
 if __name__ == '__main__':
-    print(predict_audio("mozila11_1.wav", print_probability=True, pitch_shift=10))
+    print(predict_audio("mozila11_1.wav", print_probability=False, pitch_shift=10))
